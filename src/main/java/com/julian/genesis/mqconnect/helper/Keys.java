@@ -27,6 +27,11 @@ final class Keys {
   }
 
   /**
+   * Pattern
+   */
+  public static final Keys GSPattern = new Keys();
+  
+  /**
    * Genesis URL
    */
   public static final Keys GSUrl = new Keys();

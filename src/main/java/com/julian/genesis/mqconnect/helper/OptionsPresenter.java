@@ -63,6 +63,8 @@ public class OptionsPresenter {
       Options.ProviderVersion.set_Value(Literals.ProviderVersionUnspecified);
       Options.UserID.set_Value("mqm");
       Options.Password.set_Value("mqm");
+      Options.GSPattern.set_Value(args[7]);
+      logger.info("GENESIS MQ Pattern: "+Options.GSPattern.Value());
       Options.ReceiveMode.set_Value(Literals.Async);
       Options.Interval.set_Value("0");
       

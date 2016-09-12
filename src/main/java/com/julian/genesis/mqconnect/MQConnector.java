@@ -135,7 +135,7 @@ public class MQConnector extends JmsApp {
 
 		logger.info("Waiting for messages...");
 		
-		MessageProcessor processor = new MessageProcessor(getGSHost(),getGSPort(),getGSUri());
+		MessageProcessor processor = new MessageProcessor(getGSHost(),getGSPort(),getGSUri(),getGSPattern());
 		processor.setConnection(connection);
 		
 		consumer.setMessageListener(processor);

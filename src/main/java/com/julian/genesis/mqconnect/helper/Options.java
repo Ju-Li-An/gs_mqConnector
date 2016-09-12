@@ -186,6 +186,11 @@ public class Options extends BaseOptions {
 	 * Delivery mode for WMQ
 	 */
 	public static Options DeliveryModeWMQ;
+	
+	/**
+	 * Method (correlationID pattern, messageId pattern)
+	 */
+	public static Options GSPattern;
 
 	/**
 	 * Static constructor.
@@ -231,6 +236,7 @@ public class Options extends BaseOptions {
 		inputMessage.put(Keys.ICConnFactName, "Enter connection factory name for initial context");
 		inputMessage.put(Keys.ICDestName, "Enter destination name for initial context");
 		inputMessage.put(Keys.GSUrl, "Enter destination URL to GeneSiS");
+		inputMessage.put(Keys.GSPattern, "Mode [C]orrelationId or [M]essageId");
 
 		// end Input messages
 
@@ -348,6 +354,10 @@ public class Options extends BaseOptions {
 				new String[] { "The name for connection factory object in the initial context." });
 
 		helpMessage.put(Keys.ICDestName, new String[] { "The name for destination object in the initial context." });
+		
+		helpMessage.put(Keys.ICDestName, new String[] { "The name for destination object in the initial context." });
+		
+		helpMessage.put(Keys.GSPattern, new String[] { "Mode [C]orrelationId or [M]essageId" });
 
 		// end Help messages
 
@@ -376,6 +386,7 @@ public class Options extends BaseOptions {
 		defaultValue.put(Keys.ICConnFactName, Literals.SampleCF);
 		defaultValue.put(Keys.ICDestName, Literals.SampleDest);
 		defaultValue.put(Keys.GSUrl, Literals.GSUrlDefault);
+		defaultValue.put(Keys.GSPattern, Literals.GSPatternDefault);
 
 		// end Default values
 
@@ -501,6 +512,7 @@ public class Options extends BaseOptions {
 		ICConnFactName = new Options(Keys.ICConnFactName);
 		ICDestName = new Options(Keys.ICDestName);
 		GSUrl = new Options(Keys.GSUrl);
+		GSPattern = new Options(Keys.GSPattern);
 
 	} // end static constructor
 

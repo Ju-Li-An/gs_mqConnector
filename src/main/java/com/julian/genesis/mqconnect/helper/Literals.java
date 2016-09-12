@@ -29,6 +29,8 @@ public final class Literals {
   }
 
   public static final String GSUrlDefault = "http://localhost:9876/default/";
+  
+  public static final String GSPatternDefault = "C";
   /**
    * Simple mode for samples
    */

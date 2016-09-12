@@ -104,6 +104,9 @@ public abstract class JmsApp {
 		return val;
 	}
 
+	protected static String getGSPattern() {
+		return Options.GSPattern.Value();
+	}
 	
 
 } // end JMSApp

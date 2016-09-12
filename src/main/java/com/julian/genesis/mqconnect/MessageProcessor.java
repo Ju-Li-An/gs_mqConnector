@@ -72,6 +72,8 @@ public class MessageProcessor implements MessageListener {
 	private HttpAsyncRequester requester;
 
 	private String gsService;
+	
+	private String gsPattern;
 
 	private Connection connection;
 	
@@ -80,9 +82,10 @@ public class MessageProcessor implements MessageListener {
 	 */
 	private static final Logger logger = LogManager.getLogger(MessageProcessor.class);
 
-	public MessageProcessor(String hostname, int port, String gsService) throws Exception {
+	public MessageProcessor(String hostname, int port, String gsService,String gsPattern) throws Exception {
 
 		this.gsService = gsService;
+		this.gsPattern = gsPattern;
 
 		httpproc = HttpProcessorBuilder.create().add(new RequestContent()).add(new RequestTargetHost())
 				.add(new RequestConnControl()).add(new RequestUserAgent("Test/1.1"))
@@ -128,9 +131,13 @@ public class MessageProcessor implements MessageListener {
 	private void sendToGenesis(TextMessage message) {
 		HttpEntity body = null;
 		String msgId=null;
+		String corrId=null;
+
 		try {
 			msgId=message.getJMSMessageID();
+			corrId=message.getJMSCorrelationID();
 			logger.debug("NOUVEAU MESSAGE : "+msgId );
+			logger.debug("CORRID : "+corrId );
 			logger.debug(message);
 			logger.debug(pool.getTotalStats().toString());
 
@@ -148,6 +155,7 @@ public class MessageProcessor implements MessageListener {
 	
 		final long start = new Date().getTime();
 		final String messageId = msgId;
+		final String correlationId=corrId;
 		requester.execute(new BasicAsyncRequestProducer(httpHost, request), 
 				new BasicAsyncResponseConsumer(), 
 				pool,
@@ -159,7 +167,7 @@ public class MessageProcessor implements MessageListener {
 						logger.debug(pool.getTotalStats().toString());
 						logger.debug(httpHost + "->" + response.getStatusLine());
 						try {
-							postResponse(response.getEntity().getContent(),new Date().getTime(),messageId);
+							postResponse(response.getEntity().getContent(),new Date().getTime(),messageId,correlationId);
 						} catch (UnsupportedOperationException | IOException e) {
 							e.printStackTrace();
 						} 
@@ -178,7 +186,7 @@ public class MessageProcessor implements MessageListener {
 				});
 	}
 
-	public void postResponse(InputStream response,long start,String messageId) throws IOException {
+	public void postResponse(InputStream response,long start,String messageId,String correlationId) throws IOException {
 		StringBuilder inputStringBuilder = new StringBuilder();
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response));
 
@@ -201,6 +209,11 @@ public class MessageProcessor implements MessageListener {
 			producer = JmsFactory.MyCreateProducer(session, destination);
 
 			Message sendMsg = session.createTextMessage(inputStringBuilder.toString());
+			if(this.gsPattern.equalsIgnoreCase("M")){
+				sendMsg.setJMSCorrelationID(messageId);
+			}else{
+				sendMsg.setJMSCorrelationID(correlationId);
+			}
 
 			producer.send(sendMsg);
 			logger.info(messageId + " - STAT PUT MQ: "+(new Date().getTime()-start)+" ms");
@@ -226,12 +239,10 @@ public class MessageProcessor implements MessageListener {
 				}
 			}
 		}
-
 	}
 
 	@Override
 	public void onMessage(Message msg) {
-
 		TextMessage message = (TextMessage) msg;
 
 		this.sendToGenesis(message);
